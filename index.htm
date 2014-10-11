@@ -5,12 +5,6 @@
 	function getPosition(e){
 		var left = 0;
 		var top  = 0;
-		/*while(e.offsetParent){
-			left += e.offsetLeft;
-			top	 += e.offsetTop;
-			e = offsetParent;
-		}
-		*/
 		left += e.offsetLeft;
 		top	 += e.offsetTop;
 		return {x:left, y:top};
@@ -131,7 +125,6 @@
 	    ctx.stroke();
 	}
 </script>
-<canvas id="myCanvas"></canvas>
-
+	<canvas id="myCanvas"></canvas>
 </body>
 </html>
