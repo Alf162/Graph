@@ -1,0 +1,137 @@
+<html>
+<body>
+<link rel="stylesheet" type="text/css" href="style/style.css">
+<script language="javascript">
+	function getPosition(e){
+		var left = 0;
+		var top  = 0;
+		/*while(e.offsetParent){
+			left += e.offsetLeft;
+			top	 += e.offsetTop;
+			e = offsetParent;
+		}
+		*/
+		left += e.offsetLeft;
+		top	 += e.offsetTop;
+		return {x:left, y:top};
+	}
+	var dragMaster =(function(){
+		var dragObj;
+		var mouseOffset;
+
+		function getMouseOffset(target, e){
+			var docPos = getPosition(target);
+			return {x:e.pageX - docPos.x, Y:e.pageY - docPos.y};
+		}
+
+		function mouseDown(e){
+			dragObj = this;
+			mouseOffset = getMouseOffset(this,e);
+			document.onmousemove = mouseMove;
+			document.onmouseup = mouseUp;
+			document.ondragstart = function(){ return false; }
+			document.body.onselectstart = function(){ return false; }
+
+			return false;
+		}
+
+		function mouseMove(e){
+			dragObj.style.position = 'absolute';
+			dragObj.style.top  = e.pageY - mouseOffset.Y  + 'px';
+			dragObj.style.left = e.pageX - mouseOffset.x  + 'px';
+
+			return false;
+		}
+
+		function mouseUp(e){
+			updateNodes(dragObj);
+			//console.log(simpNodes.toSource());
+			drawLinesNodes();
+			dragObj = null;
+
+			document.onmousemove		= null;
+			document.onmouseup	 		= null;
+			document.ondragstart    	= null;
+			document.body.onselectstart = null;
+		}
+
+		return {
+			init: function(){
+				document.onmousemove = mouseMove;
+			},
+
+			makeDraggable: function(el){
+				el.onmousedown = mouseDown;
+			}
+		};
+	})();
+	onload = function(){
+		addNodes();
+		var x = document.getElementsByTagName('span');
+		for(var i=0; i<x.length; i++)
+			dragMaster.makeDraggable(x[i]);
+		drawLinesNodes();
+	}
+
+	function simpNode(id, title, top, left){
+		this.id 	= id;
+		this.title 	= title;
+		this.top 	= top;
+		this.left 	= left;
+	};
+	var simpNodes = [];
+
+	function initNodes(){
+		var x = new simpNode(1, 'Узел1', 10, 10);
+		simpNodes.push(x);
+		x = new simpNode(2, 'Узел2', 120, 170);
+		simpNodes.push(x);
+	}
+
+	function addNodes(){
+		initNodes();
+		for(var i=0; i<simpNodes.length; i++){
+			var newSpan = document.createElement('span');
+			newSpan.className 	= 'abcd';
+			newSpan.id 			= simpNodes[i].id;
+			newSpan.innerHTML 	= simpNodes[i].title;
+			newSpan.style.position = "absolute";
+			newSpan.style.top = simpNodes[i].top;
+			newSpan.style.left = simpNodes[i].left;
+			console.log(simpNodes[i].title);
+			document.body.appendChild(newSpan);
+		}
+	}
+	
+	function drawLinesNodes(){
+		var ofX = document.getElementById("myCanvas").offsetLeft;
+		var ofY = document.getElementById("myCanvas").offsetTop;
+		//console.log(simpNodes.toSource());
+		drawLine(simpNodes[0].left-ofX+30, simpNodes[0].top-ofY+10, simpNodes[1].left-ofX+30, simpNodes[1].top-ofY+10);
+	}
+
+	function updateNodes(obj){
+		var canvas = document.getElementById("myCanvas");
+		document.body.removeChild(canvas);
+		var newCanvas = document.createElement('canvas');
+		newCanvas.id = 'myCanvas';
+		document.body.appendChild(newCanvas);
+		for(var i=0; i<simpNodes.length; i++)
+			if(simpNodes[i].id == obj.id){
+				simpNodes[i].left 	= obj.style.left.split('px')[0];
+				simpNodes[i].top 	= obj.style.top.split('px')[0];
+			}
+	}
+
+	function drawLine(x_first, y_first, x_second, y_second){
+	    var canvas = document.getElementById("myCanvas");
+	    var ctx = canvas.getContext("2d");
+	    ctx.moveTo( x_first, y_first );
+	    ctx.lineTo( x_second, y_second );
+	    ctx.stroke();
+	}
+</script>
+<canvas id="myCanvas"></canvas>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+.abcd{
+	background-image: url(../img/1.jpg);
+	width: 60px;
+	height: 20px;
+	cursor: pointer;
+	padding: 5px;
+	text-align: center;
+	border-radius: 40px;
+	font-family: Verdana;
+	font-size: 12px;
+}
+#myCanvas {
+	border: 1px red solid;
+}
