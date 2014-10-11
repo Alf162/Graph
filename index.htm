@@ -1,64 +1,10 @@
 <html>
 <body>
 <link rel="stylesheet" type="text/css" href="style/style.css">
+<script language="javascript" src="js/dragMaster.js"></script>
 <script language="javascript">
-	function getPosition(e){
-		var left = 0;
-		var top  = 0;
-		left += e.offsetLeft;
-		top	 += e.offsetTop;
-		return {x:left, y:top};
-	}
-	var dragMaster =(function(){
-		var dragObj;
-		var mouseOffset;
+	var simpNodes = [];
 
-		function getMouseOffset(target, e){
-			var docPos = getPosition(target);
-			return {x:e.pageX - docPos.x, Y:e.pageY - docPos.y};
-		}
-
-		function mouseDown(e){
-			dragObj = this;
-			mouseOffset = getMouseOffset(this,e);
-			document.onmousemove = mouseMove;
-			document.onmouseup = mouseUp;
-			document.ondragstart = function(){ return false; }
-			document.body.onselectstart = function(){ return false; }
-
-			return false;
-		}
-
-		function mouseMove(e){
-			dragObj.style.position = 'absolute';
-			dragObj.style.top  = e.pageY - mouseOffset.Y  + 'px';
-			dragObj.style.left = e.pageX - mouseOffset.x  + 'px';
-
-			return false;
-		}
-
-		function mouseUp(e){
-			updateNodes(dragObj);
-			//console.log(simpNodes.toSource());
-			drawLinesNodes();
-			dragObj = null;
-
-			document.onmousemove		= null;
-			document.onmouseup	 		= null;
-			document.ondragstart    	= null;
-			document.body.onselectstart = null;
-		}
-
-		return {
-			init: function(){
-				document.onmousemove = mouseMove;
-			},
-
-			makeDraggable: function(el){
-				el.onmousedown = mouseDown;
-			}
-		};
-	})();
 	onload = function(){
 		addNodes();
 		var x = document.getElementsByTagName('span');
@@ -67,13 +13,21 @@
 		drawLinesNodes();
 	}
 
+	function getPosition(e){
+		var left = 0;
+		var top  = 0;
+		left += e.offsetLeft;
+		top	 += e.offsetTop;
+		return {x:left, y:top};
+	}
+	
+
 	function simpNode(id, title, top, left){
 		this.id 	= id;
 		this.title 	= title;
 		this.top 	= top;
 		this.left 	= left;
 	};
-	var simpNodes = [];
 
 	function initNodes(){
 		var x = new simpNode(1, 'Узел1', 10, 10);
